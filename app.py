@@ -19,7 +19,7 @@ CHANNEL_IDENTIFIER = "UCg_z7bjf2hQwMwafHhxMmNQ"
 
 GIST_API_URL = f"https://api.github.com/gists/{GIST_ID}" if GIST_ID else None
 HEADERS = {
-    {'Authorization': f'token {GITHUB_TOKEN}',
+    'Authorization': f'token {GITHUB_TOKEN}',
     'Accept': 'application/vnd.github.v3+json',
     'User-Agent': 'YouTubeMirrorApp'
 } if GITHUB_TOKEN else {}
