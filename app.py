@@ -8,7 +8,7 @@ import isodate
 
 app = Flask(__name__)
 
-# === CONFIG ===
+# === CONFIG === -
 API_KEY = os.environ.get("YOUTUBE_API_KEY")
 GITHUB_TOKEN = os.environ.get("GITHUB_TOKEN")
 GIST_ID = os.environ.get("GIST_ID")
