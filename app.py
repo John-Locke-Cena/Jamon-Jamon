@@ -157,7 +157,13 @@ def get_all_videos(youtube, playlist_id, published_after=None):
 
 @app.route('/')
 def channel_mirror():
-    youtube = googleapiclient.discovery.build("youtube", "v3", developerKey=API_KEY)
+    youtube = googleapiclient.discovery.build(
+    "youtube",
+    "v3",
+    developerKey=API_KEY,
+    cache_discovery=False,
+    static_discovery=False
+    )
 
     cache = gist_get()
     channel_title = channel_description = None
