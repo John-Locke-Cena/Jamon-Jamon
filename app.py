@@ -8,18 +8,18 @@ import isodate
 
 app = Flask(__name__)
 
-# === CONFIG === -
+# === CONFIG ===
 API_KEY = os.environ.get("YOUTUBE_API_KEY")
 GITHUB_TOKEN = os.environ.get("GITHUB_TOKEN")
 GIST_ID = os.environ.get("GIST_ID")
 
-SAVE_LOCAL_CACHE = False  # Render no permite escritura fuera de /tmp
+SAVE_LOCAL_CACHE = False
 
 CHANNEL_IDENTIFIER = "UCg_z7bjf2hQwMwafHhxMmNQ"
 
 GIST_API_URL = f"https://api.github.com/gists/{GIST_ID}" if GIST_ID else None
 HEADERS = {
-    'Authorization': f'token {GITHUB_TOKEN}',
+    {'Authorization': f'token {GITHUB_TOKEN}',
     'Accept': 'application/vnd.github.v3+json',
     'User-Agent': 'YouTubeMirrorApp'
 } if GITHUB_TOKEN else {}
@@ -32,9 +32,8 @@ def get_youtube_service():
 
 
 def gist_get():
-    if not (GIST_ID and GITHUB_TOKEN):        # ← aquí estaba el error (faltaba :)
+    if not (GIST_ID and GITHUB_TOKEN):
         return None
-
     try:
         r = requests.get(GIST_API_URL, headers=HEADERS, timeout=10)
         if r.status_code == 200:
@@ -49,7 +48,6 @@ def gist_get():
 def gist_update(cache_data):
     if not (GIST_ID and GITHUB_TOKEN):
         return False
-
     payload = {
         "description": "YouTube mirror cache",
         "files": {"cache.json": {"content": json.dumps(cache_data, indent=2, default=str)}}
@@ -82,11 +80,15 @@ def get_all_videos(youtube, playlist_id):
             sn = item["snippet"]
             if sn["title"] in ["Private video", "Deleted video"]:
                 continue
+            # CORREGIDO: quitado el paréntesis extra
+            thumbnail_url = ""
+            if "thumbnails" in sn:
+                thumbnail_url = sn["thumbnails"].get("high", sn["thumbnails"].get("default", {})).get("url", "")
             videos.append({
                 "title": sn["title"],
                 "description": sn.get("description", ""),
                 "video_id": item["contentDetails"]["videoId"],
-                "thumbnail": sn["thumbnails"].get("high", sn["thumbnails"].get("default", {})()).get("url", ""),
+                "thumbnail": thumbnail_url,
                 "published_at": sn["publishedAt"]
             })
         page_token = res.get("nextPageToken")
